@@ -9,9 +9,15 @@
 
 - Add decoding paint and geo
 
+- Fun paint & geo classes!
+
 ## Monitor
 
 - Add monitoring playdata with events for changes.
+
+## Palettes
+
+- For getting each palette and its colours
 
 # Possibly Do
 
