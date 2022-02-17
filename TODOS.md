@@ -2,11 +2,6 @@
 
 ## Path
 
-- Only save Playdata when dict is changed, not loaded
-  - This can be done with a dict subclass
-
-- Finish rest of _playdata lines
-
 - level_data class and finder
   - Can add a reader and writer too, just a dict.
 
@@ -21,6 +16,8 @@
 # Possibly Do
 
 - Perhaps some utils related to gamemakers weird way of doing things, like how rgb is backwards for some reason
+
+- Finish rest of _playdata things we don't know what it does
 
 # Formatting
 
