@@ -2,8 +2,8 @@
 
 ## Path
 
-- level_data class and finder
-  - Can add a reader and writer too, just a dict.
+- level_data screen class (`level_data["0_0_0"].geo` instead of `level_data["0_0_0"]["geo"]`)
+  - This will solve the issue of not being able to detect subdicts changes
 
 ## Decoding
 
