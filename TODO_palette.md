@@ -2,8 +2,11 @@
 
 ## Planned:
 
-> get( name, screen=None )
+> get_palette( name )
 Returns palette JSON ({0: COLOR, 1: COLOR ... })
+
+> get_screen( screen )
+Returns palette for screen (including screen specific colours)
 
 > customs( playdata )
 Any palettes returned after setting customs will include custom colours

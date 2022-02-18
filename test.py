@@ -17,6 +17,7 @@ print("== level_data Test ==")
 level = pycory.path.find_level_data()
 
 with level.open("w") as level_data:
-    print(level_data["0_0_0"]["geo"])
-    level_data["0_0_0"]["objects"][2]["x"], level_data["0_0_0"]["objects"][2]["y"] = random.randint(0,1920), random.randint(0,720)
-    print("0_0_0 tree randomised.")
+    print(level_data["0_0_0"].geo,level_data["0_1_2"].geo)
+    level_data["0_0_0"].geo = level_data["0_1_2"].geo
+    #level_data["0_0_0"]["objects"][2]["x"], level_data["0_0_0"]["objects"][2]["y"] = random.randint(0,1920), random.randint(0,720)
+    #print("0_0_0 tree randomised.")

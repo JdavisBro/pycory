@@ -3,7 +3,8 @@
 ## Path
 
 - level_data screen class (`level_data["0_0_0"].geo` instead of `level_data["0_0_0"]["geo"]`)
-  - This will solve the issue of not being able to detect subdicts changes
+  - Need to do .objects, palette, title, area, transition, music, decos, object_id, name
+  - Most will be easy except objects and decos because they're lists
 
 ## Decoding
 
