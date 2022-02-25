@@ -1,12 +1,14 @@
 import json
+import shutil
 
 from typing import Union
 from contextlib import contextmanager
 from pathlib import Path
 
-from .editdict import EditDict
+from .editstrucs import EditDict, EditList
 
 __all__ = (
+    "ScreenExits",
     "LevelDataScreen",
     "LevelDataRead",
     "LevelData",
@@ -47,26 +49,38 @@ class ScreenExits():
         return self.old != str(self)
 
 class LevelDataScreen():
-    def __init__(self, content):
-        self.changed = False
+    def __init__(self, content, allowchanges):
+        self._changed = False
         self.content = content
+        self.allowchanges = allowchanges
         self.exits = ScreenExits(content.get("exits","1111"),False)
+        self.objects = EditList(allowchanges,content.get("objects",[]))
+        self.decos = EditList(allowchanges,content.get("decos",[]))
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         if self.exits.changed:
             self.content["exits"] = str(self.exits)
 
+        if self.objects.changed:
+            self.content["objects"] = self.objects
+
+        if self.decos.changed:
+            self.content["decos"] = self.decos
+
         return self.content 
 
-    def check_changes(self):
-        if self.changed:
-            return True
-        if self.exits.changed:
-            return True
-        return False
+    @property
+    def changed(self) -> bool:
+        return bool(self._changed or self.exits.changed or self.objects.changed or self.decos.changed)
+
+    def _set(self, key, value):
+        if not self.allowchanges:
+            raise IOError("level_data is not open for writing")
+        self.content[key] = value
+        self._changed = True
 
     @property
-    def ambiance(self):
+    def ambiance(self) -> str:
         """
         The ambiance value of the screen
         Example: "amb_luncheon_outdoor"
@@ -75,11 +89,10 @@ class LevelDataScreen():
 
     @ambiance.setter
     def ambiance(self, value: str):
-        self.content["ambiance"] = str(value)
-        self.changed = True
+        self._set("ambiance",str(value))
 
     @property
-    def geo(self):
+    def geo(self) -> str:
         """
         The geo *string* of the screen
         """
@@ -87,25 +100,79 @@ class LevelDataScreen():
 
     @geo.setter
     def geo(self, value: str):
-        self.content["geo"] = str(value)
-        self.changed = True
+        self._set("geo",str(value))
+
+    @property
+    def palette(self) -> str:
+        return self.content.get("palette",None)
+
+    @palette.setter
+    def palette(self, value: str):
+        self._set("palette",str(value))
+
+    @property
+    def title(self) -> str:
+        return self.content.get("title",None)
+
+    @title.setter
+    def title(self, value: str):
+        self._set("title",str(value))
+
+    @property
+    def area(self) -> str:
+        return self.content.get("area",None)
+
+    @area.setter
+    def area(self, value: str):
+        self._set("area",str(value))
+
+    @property
+    def transition(self) -> int:
+        return int(self.content.get("transition",0))
+
+    @transition.setter
+    def transition(self, value: int):
+        self._set("transition",int(value))
+
+    @property
+    def music(self):
+        return self.content.get("music",None)
+
+    @music.setter
+    def music(self, value: str):
+        self._set("music",str(value))
+
+    @property
+    def object_id(self) -> int:
+        return int(self.content.get("object_id",None))
+
+    @object_id.setter
+    def object_id(self, value: int):
+        self._set("object_id",int(value))
+
+    @property
+    def name(self) -> str:
+        return self.content.get("name",None)
+
+    @name.setter
+    def name(self, value: str):
+        self._set("name",str(value))
 
 class LevelDataRead(EditDict):
     def __init__(self, content, allowchanges, *args, **kwargs):
         super().__init__(allowchanges, content, *args, **kwargs)
 
-    def __str__(self):
+    def to_dict(self):
         for screen in self:
             item = super().__getitem__(screen)
             if isinstance(item, LevelDataScreen):
                 if item.changed:
-                    self.changed = True
+                    self._changed = True
                 super().__setitem__(screen, item.to_dict())
-        return json.dumps(self,separators=(",",":"))
 
     def to_leveldatascreen(self, key, value):
         if not isinstance(value, LevelDataScreen):
-            value = LevelDataScreen(value)
+            value = LevelDataScreen(value,self.allowchanges)
             super().__setitem__(key, value)
         return value
 
@@ -115,7 +182,7 @@ class LevelDataRead(EditDict):
 
     def __setitem__(self, key, value: dict): # If you set a screen like level_data[screen] = {}
         if isinstance(value,dict):
-            value = self.to_leveldatascreen(key, value)
+            self.to_leveldatascreen(key, value)
         else:
             TypeError("LevelDataScreens must be set to a dict")
 
@@ -129,16 +196,14 @@ class LevelData():
     def make_backups(self, content):
         """
         Makes a backup of level_data,
-        Two backups can exists at once and the oldest will be deleted
         One backup is made when it doesn't exist and is never touched.
         """
         if not (self.location.parent / "level_data_backup").is_file():
-            with (self.location.parent / "level_data_backup").open("w+") as f:
-                print("Pycory | Making level_data backup.")
-                f.writelines(content)
+            print("Pycory | Making level_data backup.")
+            shutil.copy(self.location,(self.location.parent / "level_data_backup")) 
 
     @contextmanager
-    def open(self, mode: str="r", backup=True):
+    def open(self, mode: str="r", backup=True) -> LevelDataRead:
         """
         Open level_data for reading or editing
         Use in a with statement, for example:
@@ -151,11 +216,16 @@ class LevelData():
         """
         with self.location.open("r") as f:
             content = f.read()
+
         if mode == "w" and backup:
             self.make_backups(content)
+
         read = LevelDataRead(json.loads(content), mode=="w")
         yield read
+
         if mode == "w":
+            if getattr(read, "to_dict"):
+                read.to_dict()
             if getattr(read,"changed",True): # currenly changes are only found if the base dict is modified
                 with self.location.open("w") as f:
-                    f.write(str(read))
+                    f.write(json.dumps(read,separators=(",",":")))

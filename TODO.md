@@ -1,11 +1,5 @@
 # To Do
 
-## Path
-
-- level_data screen class (`level_data["0_0_0"].geo` instead of `level_data["0_0_0"]["geo"]`)
-  - Need to do .objects, palette, title, area, transition, music, decos, object_id, name
-  - Most will be easy except objects and decos because they're lists
-
 ## Decoding
 
 - Add decoding paint and geo
@@ -22,13 +16,25 @@
 
 # Possibly Do
 
-- Perhaps some utils related to gamemakers weird way of doing things, like how rgb is backwards for some reason
+## Path
+
+- Object and Deco class
 
 - Finish rest of _playdata things we don't know what it does
 
+## Utils
+
+- Perhaps some utils related to gamemakers weird way of doing things, like how rgb is backwards for some reason
+
+
 # Formatting
+
+- Make exceptions uniform
+
+- Add all type hints and return types
 
 - Make docstrings uniform and useful
   - Parameters
   - Return types
   - Errors
+

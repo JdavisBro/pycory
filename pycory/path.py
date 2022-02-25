@@ -9,14 +9,16 @@ import json
 from contextlib import contextmanager
 from pathlib import Path
 
-from .playdata import PlaydataRead, Playdata
-from .level_data import LevelDataRead, LevelData
+from .playdata import *
+from .level_data import *
 
 __all__ = (
     "PlaydataRead",
     "Playdata",
     "Save",
     "find_save",
+    "ScreenExits",
+    "LevelDataScreen",
     "LevelDataRead",
     "LevelData",
     "find_level_data",
@@ -33,7 +35,7 @@ class Save():
     def __repr__(self):
         return str(self.location)
 
-def find_save(location=None):
+def find_save(location=None) -> Save:
     """
     Returns a save location from first:
       - Location argument
@@ -66,7 +68,7 @@ def find_save(location=None):
     else:
         raise FileNotFoundError(f"Couldn't find save file. (from {isfrom})")
 
-def find_level_data(location=None):
+def find_level_data(location=None) -> LevelData:
     """
     Returns a save location from first:
       - Location argument

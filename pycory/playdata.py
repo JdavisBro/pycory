@@ -4,7 +4,7 @@ import json
 from contextlib import contextmanager
 from pathlib import Path
 
-from .editdict import EditDict
+from .editstrucs import EditDict, EditList
 
 __all__ = (
     "PlaydataRead",
