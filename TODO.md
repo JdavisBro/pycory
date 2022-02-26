@@ -6,7 +6,7 @@
 
 - Fun paint & geo classes!
 
-- OTHER paint sizes like: fanart, custom_stamp,desert,tee,hat
+- OTHER paint sizes like: fanart and custom_stamp,desert,tee,hat
 
 ## Monitor
 

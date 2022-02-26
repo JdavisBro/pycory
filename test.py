@@ -54,10 +54,13 @@ def test_level_data():
         print(f"0_0_0 tree randomised. Now at {level_data['0_0_0'].objects[2]['x']}, {level_data['0_0_0'].objects[2]['y']}")
 
 def test_geo():
+    print("\n== Geo Test ==\n")
     geo_string = "eJztz8EOhCAMRdEXx\/7\/LzsBokSKfU0xM4vejYG0h7jvY1vtM69NKLtqCb4CjscYqJ4D4OyC44C1IBwgloOECB9oi17QFN2gJf49WEZAgqBBUCAIEOhEAwQBAr34DMIJwgC7Sc77iue6SLkQucB6Fhd4Jbdv45s3B2ee\/sjpLQK7LFDkcZ0Hx38Jik7FFAOeKoY8hYx6lVygZFmW\/aoDrtoX0Q=="
     geo = pycory.decode.geo(geo_string)
     for x, y, value in geo.enumerate():
-        print(f"{x},{y} = {value}", end=" - ")
+        if x == y and y % 5 == 0:
+            print(f"{' - ' if x!=0 and y!=0 else ''}{x},{y} = {''.join(value)}", end="")
+    print("")
 
 tests = {
     "playdata": test_playdata,
