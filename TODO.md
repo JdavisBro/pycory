@@ -6,6 +6,8 @@
 
 - Fun paint & geo classes!
 
+- OTHER paint sizes like: fanart, custom_stamp,desert,tee,hat
+
 ## Monitor
 
 - Add monitoring playdata with events for changes.
